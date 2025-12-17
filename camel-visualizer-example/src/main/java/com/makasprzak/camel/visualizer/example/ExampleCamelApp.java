@@ -41,8 +41,8 @@ public class ExampleCamelApp extends RouteBuilder {
         ModelCamelContext camelContext = new ExampleCamelApp().buildContext();
         camelContext.getRouteDefinitions().forEach(route -> {
             LOG.info(route.toString());
-            route.getInputs().forEach(in -> System.out.println("Input: "+in.getUri()));
-            route.getOutputs().forEach(out -> System.out.println("Out: "+out.getClass()));
+            //route.getInputs().forEach(in -> System.out.println("Input: "+in.getUri()));
+            //route.getOutputs().forEach(out -> System.out.println("Out: "+out.getClass()));
         });
         FileCamelDiagramExporter.fileExporter(camelContext, System.getProperty("diagram.source.out","camel.plantuml"), System.getProperty("diagram.out","camel.png")).export();
     }

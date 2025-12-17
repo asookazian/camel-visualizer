@@ -15,16 +15,18 @@ import static com.makasprzak.camel.visualizer.model.Activity.activity;
 import static com.makasprzak.camel.visualizer.model.Condition.Builder.condition;
 import static com.makasprzak.camel.visualizer.model.Link.Builder.link;
 
+// asookazian: changes made to accommodate Camel API diffs
+// between 2.x and 3.x
 public class CamelModelMapper {
     private final Logger LOG = LoggerFactory.getLogger(CamelModelMapper.class);
 
     public Set<Link> map(RouteDefinition routeDefinition) {
         Set<Link> links = new HashSet<Link>();
-        for (FromDefinition fromDefinition : routeDefinition.getInputs()) {
-            Activity lastSource = activity(fromDefinition.getUriOrRef().toString());
-            List<ProcessorDefinition<?>> outputs = routeDefinition.getOutputs();
-            links.addAll(processOutputs(lastSource, outputs));
-        }
+        FromDefinition fromDefinition = routeDefinition.getInput();
+        String uri = fromDefinition.getUri();
+        Activity lastSource = activity(uri);
+        List<ProcessorDefinition<?>> outputs = routeDefinition.getOutputs();
+        links.addAll(processOutputs(lastSource, outputs));
         return links;
     }
 
@@ -72,7 +74,7 @@ public class CamelModelMapper {
     }
 
     private String getLabel(ToDefinition output) {
-        return output.getUriOrRef();
+        return output.getUri();
     }
 
     private Condition getCondition(Set<Link> links, List<WhenDefinition> whens, int currentWhen, OtherwiseDefinition otherwiseDefinition) {
@@ -102,7 +104,11 @@ public class CamelModelMapper {
 
         List<ProcessorDefinition<?>> whenFalseOutputs = otherwiseDefinition.getOutputs();
         ProcessorDefinition<?> otherwise = whenFalseOutputs.get(0);
-        Activity whenFalseActivity = activity(getLabel((ToDefinition) otherwise));
+        Activity whenFalseActivity = new Activity("SystemGeneratedTestActivity");
+        if(otherwise instanceof ToDefinition) {
+            whenFalseActivity = activity(getLabel((ToDefinition) otherwise));
+        }
+                
         if (whenFalseOutputs.size() > 1) {
             links.addAll(processOtherOutputs(whenFalseOutputs, whenFalseActivity));
         }

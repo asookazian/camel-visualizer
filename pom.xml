@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <properties>
-        <camel.version>2.14.1</camel.version>
+        <camel.version>3.0.0</camel.version>
     </properties>
     <dependencyManagement>
         <dependencies>
